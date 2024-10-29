@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  APILambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: MyAPIFunction
+      Handler: BeerInventory.Controllers::BeerInventory.Controllers.BeerController::Get
+      Role: arn:aws:iam::909765109557:role/AwsServRole
+      Code:
+        S3Bucket: mys3beerbucket
+        S3Key: beer-api/deployment-package.zip
+      Runtime: dotnet6
+      MemorySize: 1024
+      Timeout: 30
+
+  APIGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: MyBeerAPI
+      Description: "API Gateway for the .NET Lambda function"
+
+  APIGatewayRootMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: ANY
+      ResourceId:
+        Fn::GetAtt:
+          - APIGateway
+          - RootResourceId
+      RestApiId:
+        Ref: APIGateway
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri:
+          Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${APILambdaFunction.Arn}/invocations
+
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: APILambdaFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${APIGateway}/*/*
+
+Outputs:
+  ApiEndpoint:
+    Description: "API Gateway endpoint URL for Lambda function"
+    Value:
+      Fn::Sub: https://${APIGateway}.execute-api.${AWS::Region}.amazonaws.com/prod/
