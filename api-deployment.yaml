@@ -8,7 +8,7 @@ Resources:
       Role: arn:aws:iam::909765109557:role/AwsServRole
       Code:
         S3Bucket: mys3beerbucket
-        S3Key: beer-api/deployment-package.zip
+        S3Key: beer-api/BeerInventoryApi.zip
       Runtime: dotnet6
       MemorySize: 1024
       Timeout: 30
