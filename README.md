@@ -70,7 +70,7 @@ A compatible database ( SQL Server).
 
 **Clone the Repository**
 
-git clone https://github.com/yourusername/BeerInventoryAPI.git
+git clone https://github.com/anandtech30/BeerInventoryAPI.git
 
 cd BeerInventoryAPI
 
