@@ -9,7 +9,7 @@ Resources:
       Code:
         S3Bucket: mys3beerbucket
         S3Key: beer-api/BeerInventoryApi.zip
-      Runtime: dotnet6
+      Runtime: dotnet8
       MemorySize: 1024
       Timeout: 30
 
